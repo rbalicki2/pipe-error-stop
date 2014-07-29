@@ -38,6 +38,7 @@ gulp.task('ts', function() {
 #### stream
 
 Type: `stream`
+
 Required: `true`
 
 The stream to buffer and whose information to flush when it emits an `'end'` event.
@@ -47,6 +48,7 @@ The stream to buffer and whose information to flush when it emits an `'end'` eve
 ##### log
 
 Type: `boolean`
+
 Default: `false`
 
 Whether to `console.log` notes such as `'Stream ended with an error; discontinuing pipe.'`
