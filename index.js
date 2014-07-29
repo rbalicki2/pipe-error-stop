@@ -39,7 +39,7 @@ function pipeErrorStop(stream, options) {
     delayer.emit('close');
     delayer.emit('end');
 
-    if (!errors.length) {
+    if (errors.length) {
       if (options.allErrorsCallback) {
         options.allErrorsCallback(errors);
       }
