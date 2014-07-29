@@ -22,7 +22,7 @@ function pipeErrorStop(stream, options) {
 
   function onEnd() {
     if (options.log) {
-      if (error) {
+      if (errors.length) {
         console.log('Stream ended with an error; discontinuing pipe.');
       } else {
         console.log('Stream ended without an error; flushing contents.');
