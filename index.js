@@ -1,6 +1,7 @@
-var PassThrough = require('stream').PassThrough;
+var PassThrough = require('stream').PassThrough,
+  through2 = require('through2');
 
-function errorHandler(stream, options) {
+function pipeErrorStop(stream, options) {
   var flushed = false, doneCallback, files = [], errors = [];
 
   if (options === undefined) {
@@ -76,4 +77,4 @@ function errorHandler(stream, options) {
   return combined;
 }
 
-module.exports = errorHandler;
+module.exports = pipeErrorStop;
