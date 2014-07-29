@@ -37,8 +37,7 @@ gulp.task('ts', function() {
 
 #### stream
 
-Type: `stream`
-
+Type: `stream`  
 Required: `true`
 
 The stream to buffer and whose information to flush when it emits an `'end'` event.
