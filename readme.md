@@ -61,7 +61,7 @@ If supplied, `allErrorCallback` is called when the data would have been flushed 
 
 Type: `function(err)`
 
-If supplied, whenever the stream emits an error, this function is called with the error as the first parameter.
+If supplied, whenever the stream emits an error, this function is called with the error as the first parameter. Note that some streams may emit only the first error, or not emit errors at all. `tsc` in the above example emits at most one error. YMMV.
 
 ##### successCallback
 
