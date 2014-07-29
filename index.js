@@ -2,7 +2,7 @@ var PassThrough = require('stream').PassThrough,
   through2 = require('through2');
 
 function pipeErrorStop(stream, options) {
-  var flushed = false, doneCallback = function() { }, files = [], errors = [];
+  var flushed = false, callbacks = [], files = [], errors = [];
 
   if (options === undefined) {
     options = {};
@@ -17,8 +17,7 @@ function pipeErrorStop(stream, options) {
     } else {
       this.push(file);
     }
-    done();
-    doneCallback = done;
+    callbacks.push(done);
   });
 
   function onEnd() {
@@ -36,7 +35,9 @@ function pipeErrorStop(stream, options) {
       }
     }
 
-    doneCallback();
+    for (var i = 0; i < callbacks.length; i++) {
+      callbacks[i]();
+    }
     delayer.emit('close');
     delayer.emit('end');
 
