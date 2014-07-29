@@ -1,0 +1,15 @@
+{
+  "name": "pipe-error-stop",
+  "description" : "Buffers a pipe until it ends. Only passes data onward if no error was emitted.",
+  "version" : "0.0.1",
+  "keywords" : ["pipe", "gulp"],
+  "author" : {
+    "name": "Robert Balicki",
+    "email" : "robert.balicki@gmail.com"
+  },
+  "main" : "index.js",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/rbalicki2/pipe-error-stop.git"
+  }
+}
