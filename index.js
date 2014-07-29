@@ -2,7 +2,7 @@ var PassThrough = require('stream').PassThrough,
   through2 = require('through2');
 
 function pipeErrorStop(stream, options) {
-  var flushed = false, doneCallback, files = [], errors = [];
+  var flushed = false, doneCallback = function() { }, files = [], errors = [];
 
   if (options === undefined) {
     options = {};
@@ -17,6 +17,7 @@ function pipeErrorStop(stream, options) {
     } else {
       this.push(file);
     }
+    done();
     doneCallback = done;
   });
 
