@@ -1,7 +1,7 @@
 var PassThrough = require('stream').PassThrough;
 
 function errorHandler(stream, options) {
-  var flushed = false, doneCallback, files = [], error = false;
+  var flushed = false, doneCallback, files = [], errors = [];
 
   if (options === undefined) {
     options = {};
@@ -27,7 +27,7 @@ function errorHandler(stream, options) {
         console.log('Stream ended without an error; flushing contents.');
       }
     }
-    if (!error) {
+    if (!errors.length) {
       flushed = true;
       for (var i = 0; i < files.length; i++) {
         delayer.push(files[i]);
@@ -37,13 +37,26 @@ function errorHandler(stream, options) {
     doneCallback();
     delayer.emit('close');
     delayer.emit('end');
+
+    if (!errors.length) {
+      if (options.allErrorsCallback) {
+        options.allErrorsCallback(errors);
+      }
+    } else {
+      if (options.successCallback) {
+        options.successCallback();
+      }
+    }
   }
 
-  function onError() {
+  function onError(err) {
     if (options.log) {
       console.log('Stream emitted an error; pipe will be discontinued.');
     }
-    error = true;
+    errors.push(err);
+    if (options.eachErrorCallback) {
+      options.eachErrorCallback(err);
+    }
   }
 
   var combined = new PassThrough();

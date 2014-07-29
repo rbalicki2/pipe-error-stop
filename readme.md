@@ -33,7 +33,14 @@ gulp.task('ts', function() {
 
 ## API
 
-### pipeErrorStop(options)
+### pipeErrorStop(stream, options)
+
+#### stream
+
+Type: `stream`
+Required: `true`
+
+The stream to buffer and whose information to flush when it emits an `'end'` event.
 
 #### options
 
@@ -42,19 +49,25 @@ gulp.task('ts', function() {
 Type: `boolean`
 Default: `false`
 
-Whether to log notes such as `'Stream ended with an error; discontinuing pipe.'`
+Whether to `console.log` notes such as `'Stream ended with an error; discontinuing pipe.'`
 
-##### errorCallback
+##### allErrorsCallback
 
 Type: `function(errArray)`
 
-If supplied, `errorCallback` is called with first parameter `errArray`, containing an array of all errors returned.
+If supplied, `allErrorCallback` is called when the data would have been flushed (i.e. when `stream` emits an `'end'` event.) `errArray` contains an array of all errors returned.
+
+##### eachErrorCallback
+
+Type: `function(err)`
+
+If supplied, whenever the stream emits an error, this function is called with the error as the first parameter.
 
 ##### successCallback
 
 Type: `function()`
 
-If supplied, `successCallback` is called when data is flushed through the pipe.
+If supplied, `successCallback` is called when data is flushed through the pipe (i.e. when `stream` emits and `'end'` event.) This will not be called if an error has been emitted.
 
 ## License
 
