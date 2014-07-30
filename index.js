@@ -1,5 +1,5 @@
 var PassThrough = require('stream').PassThrough,
-  through2 = require('through2');
+  through2 = require('through');
 
 function pipeErrorStop(stream, options) {
   console.log('')
@@ -8,6 +8,10 @@ function pipeErrorStop(stream, options) {
   if (options === undefined) {
     options = {};
   }
+
+  function bufferContents(file, encoding, done) {
+
+  } 
 
   var delayer = through2.obj(function(file, encoding, done) {
     if (options.log) {
