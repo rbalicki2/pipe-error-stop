@@ -67,7 +67,7 @@ If supplied, whenever the stream emits an error, this function is called with th
 
 Type: `function()`
 
-If supplied, `successCallback` is called when data is flushed through the pipe (i.e. when `stream` emits and `'end'` event.) This will not be called if an error has been emitted.
+If supplied, `successCallback` is called when data is flushed through the pipe (i.e. when `stream` emits and `'end'` event.) This will not be called if an error has been emitted. This will be called if no data was received.
 
 ## License
 

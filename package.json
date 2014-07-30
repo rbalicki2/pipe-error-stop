@@ -24,7 +24,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "request": "^2.39.0",
     "through": "^2.3.4"
   }
 }

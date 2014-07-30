@@ -2,7 +2,7 @@ var PassThrough = require('stream').PassThrough,
   through = require('through');
 
 function pipeErrorStop(stream, options) {
-  var flushed = false, callbacks = [], files = [], errors = [];
+  var flushed = false, files = [], errors = [];
 
   if (options === undefined) {
     options = {};
@@ -22,59 +22,18 @@ function pipeErrorStop(stream, options) {
       }
     }
     this.emit('end');
-  }
-
-  // var delayer = through(function(file, encoding, done) {
-  //   if (options.log) {
-  //     console.log('[pipe-error-stop] Received data from stream.');
-  //   }
-  //   if (!flushed) {
-  //     files.push(file);
-  //   } else {
-  //     this.push(file);
-  //   }
-  //   callbacks.push(done);
-  // }, function() {
-  //   console.log('flush function in delayer');
-  //   console.log(arguments);
-  // });
-  
-  var delayer = through(bufferContents, endStream);
-
-  function onEnd() {
-    console.log('on end');
-    return;
-
-    if (options.log) {
-      if (errors.length) {
-        console.log('[pipe-error-stop] Stream ended with an error; discontinuing pipe.');
-      } else {
-        console.log('[pipe-error-stop] Stream ended without an error; flushing contents.');
-      }
-    }
     if (!errors.length) {
-      flushed = true;
-      for (var i = 0; i < files.length; i++) {
-        delayer.push(files[i]);
-      }
-    }
-
-    for (var i = 0; i < callbacks.length; i++) {
-      callbacks[i]();
-    }
-    delayer.emit('close');
-    delayer.emit('end');
-
-    if (errors.length) {
-      if (options.allErrorsCallback) {
-        options.allErrorsCallback(errors);
-      }
-    } else {
       if (options.successCallback) {
         options.successCallback();
       }
+    } else {
+      if (options.allErrorsCallback) {
+        options.allErrorsCallback();
+      }
     }
   }
+
+  var delayer = through(bufferContents, endStream);
 
   function onError(err) {
     if (options.log) {
@@ -92,7 +51,6 @@ function pipeErrorStop(stream, options) {
     source.unpipe(this);
     this.transformStream = source.pipe(stream)
       .on('error', onError)
-      .on('end', onEnd)
       .pipe(delayer);
   });
 
