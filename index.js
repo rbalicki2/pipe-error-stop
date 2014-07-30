@@ -1,8 +1,7 @@
 var PassThrough = require('stream').PassThrough,
-  through2 = require('through');
+  through = require('through');
 
 function pipeErrorStop(stream, options) {
-  console.log('')
   var flushed = false, callbacks = [], files = [], errors = [];
 
   if (options === undefined) {
@@ -10,25 +9,42 @@ function pipeErrorStop(stream, options) {
   }
 
   function bufferContents(file, encoding, done) {
-
-  } 
-
-  var delayer = through2.obj(function(file, encoding, done) {
-    if (options.log) {
-      console.log('[pipe-error-stop] Received data from stream.');
+    if (file.isNull()) {
+      return;
     }
-    if (!flushed) {
-      files.push(file);
-    } else {
-      this.push(file);
+    files.push(file);
+  }
+
+  function endStream() {
+    if (!errors.length) {
+      for (var i = 0; i < files.length; i++) {
+        this.emit('data', files[i]);
+      }
     }
-    callbacks.push(done);
-  }, function() {
-    console.log('flush function in delayer');
-    console.log(arguments);
-  });
+    this.emit('end');
+  }
+
+  // var delayer = through(function(file, encoding, done) {
+  //   if (options.log) {
+  //     console.log('[pipe-error-stop] Received data from stream.');
+  //   }
+  //   if (!flushed) {
+  //     files.push(file);
+  //   } else {
+  //     this.push(file);
+  //   }
+  //   callbacks.push(done);
+  // }, function() {
+  //   console.log('flush function in delayer');
+  //   console.log(arguments);
+  // });
+  
+  var delayer = through(bufferContents, endStream);
 
   function onEnd() {
+    console.log('on end');
+    return;
+
     if (options.log) {
       if (errors.length) {
         console.log('[pipe-error-stop] Stream ended with an error; discontinuing pipe.');
