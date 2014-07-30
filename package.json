@@ -6,16 +6,24 @@
     "pipe",
     "gulp"
   ],
-  "author": {
-    "name": "Robert Balicki",
-    "email": "robert.balicki@gmail.com"
-  },
+  "author": "Robert Balicki <robert.balicki@gmail.com>",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/rbalicki2/pipe-error-stop.git"
   },
-  "devDependencies": {
+  "dependencies": {
     "through2": "^0.5.1"
+  },
+  "bugs": {
+    "url": "https://github.com/rbalicki2/pipe-error-stop/issues"
+  },
+  "homepage": "https://github.com/rbalicki2/pipe-error-stop",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "request": "^2.39.0"
   }
 }

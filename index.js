@@ -10,7 +10,7 @@ function pipeErrorStop(stream, options) {
 
   var delayer = through2.obj(function(file, encoding, done) {
     if (options.log) {
-      console.log('Received data from stream.');
+      console.log('[pipe-error-stop] Received data from stream.');
     }
     if (!flushed) {
       files.push(file);
@@ -23,9 +23,9 @@ function pipeErrorStop(stream, options) {
   function onEnd() {
     if (options.log) {
       if (errors.length) {
-        console.log('Stream ended with an error; discontinuing pipe.');
+        console.log('[pipe-error-stop] Stream ended with an error; discontinuing pipe.');
       } else {
-        console.log('Stream ended without an error; flushing contents.');
+        console.log('[pipe-error-stop] Stream ended without an error; flushing contents.');
       }
     }
     if (!errors.length) {
@@ -54,7 +54,7 @@ function pipeErrorStop(stream, options) {
 
   function onError(err) {
     if (options.log) {
-      console.log('Stream emitted an error; pipe will be discontinued.');
+      console.log('[pipe-error-stop] Stream emitted an error; pipe will be discontinued.');
     }
     errors.push(err);
     if (options.eachErrorCallback) {
