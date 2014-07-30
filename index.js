@@ -17,8 +17,15 @@ function pipeErrorStop(stream, options) {
 
   function endStream() {
     if (!errors.length) {
+      if (options.log) {
+        console.log('[pipe-error-stop] Stream finished without errors. Flushing.')
+      }
       for (var i = 0; i < files.length; i++) {
         this.emit('data', files[i]);
+      }
+    } else {
+      if (options.log) {
+        console.log('[pipe-error-stop] Stream finished, but emitted errors. Discontinuing.')
       }
     }
     this.emit('end');
