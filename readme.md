@@ -7,7 +7,7 @@
 ## Installation
 
 ```sh
-npm install --save-dev pipe-error-stop
+npm install --save pipe-error-stop
 ```
 
 ## Usage
@@ -71,4 +71,4 @@ If supplied, `successCallback` is called when data is flushed through the pipe (
 
 ## License
 
-Do whatever you want.
+MIT.
