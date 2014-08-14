@@ -4,9 +4,7 @@ var PassThrough = require('stream').PassThrough,
 function pipeErrorStop(stream, options) {
   var files = [], errors = [];
 
-  if (options === undefined) {
-    options = {};
-  }
+  options === undefined ? options = {} : null;
 
   function bufferContents(file, encoding, done) {
     if (file.isNull()) {
@@ -29,6 +27,8 @@ function pipeErrorStop(stream, options) {
       }
     }
     this.emit('end');
+    combined.emit('end');
+    combined.transformStream.emit('end');
     if (!errors.length) {
       if (options.successCallback) {
         options.successCallback();

@@ -4,8 +4,16 @@
   "version": "0.0.2",
   "keywords": [
     "pipe",
-    "gulp"
+    "gulp",
+    "error",
+    "buffer",
+    "flush"
   ],
+  "scripts": {
+    "test": "npm run coverage && npm run rm",
+    "coverage": "istanbul cover test/*.js",
+    "rm": "rimraf ./coverage"
+  },
   "author": "Robert Balicki <robert.balicki@gmail.com>",
   "main": "index.js",
   "repository": {
@@ -13,17 +21,19 @@
     "url": "https://github.com/rbalicki2/pipe-error-stop.git"
   },
   "dependencies": {
+    "gulp-json-sass": "0.0.2",
     "through2": "^0.5.1"
   },
   "bugs": {
     "url": "https://github.com/rbalicki2/pipe-error-stop/issues"
   },
   "homepage": "https://github.com/rbalicki2/pipe-error-stop",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "license": "MIT",
   "devDependencies": {
-    "through": "^2.3.4"
+    "gulp": "^3.8.7",
+    "gulp-util": "^3.0.0",
+    "gutil": "^1.5.0",
+    "tape": "^2.14.0",
+    "through2-spy": "^1.2.0"
   }
 }
