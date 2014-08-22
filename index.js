@@ -6,6 +6,23 @@ function pipeErrorStop(stream, options) {
 
   options === undefined ? options = {} : null;
 
+  var delayer = through(bufferContents, endStream);
+
+  var combined = new PassThrough();
+
+  combined.on('pipe', function(source) {
+    source.unpipe(this);
+    this.transformStream = source.pipe(stream)
+      .on('error', onError)
+      .pipe(delayer);
+  });
+
+  combined.pipe = function(dest, options) {
+    return this.transformStream.pipe(dest, options);
+  }
+
+  return combined;
+
   function bufferContents(file, encoding, done) {
     if (file.isNull()) {
       return;
@@ -40,8 +57,6 @@ function pipeErrorStop(stream, options) {
     }
   }
 
-  var delayer = through(bufferContents, endStream);
-
   function onError(err) {
     if (options.log) {
       console.log('[pipe-error-stop] Stream emitted an error; pipe will be discontinued.');
@@ -51,21 +66,6 @@ function pipeErrorStop(stream, options) {
       options.eachErrorCallback(err);
     }
   }
-
-  var combined = new PassThrough();
-
-  combined.on('pipe', function(source) {
-    source.unpipe(this);
-    this.transformStream = source.pipe(stream)
-      .on('error', onError)
-      .pipe(delayer);
-  });
-
-  combined.pipe = function(dest, options) {
-    return this.transformStream.pipe(dest, options);
-  }
-
-  return combined;
 }
 
 module.exports = pipeErrorStop;
