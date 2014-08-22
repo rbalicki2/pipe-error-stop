@@ -2,7 +2,6 @@ var test = require('tape'),
   pipeErrorStop = require('../'),
   through2 = require('through2'),
   spy = require('through2-spy'),
-  gulp = require('gulp'),
   gutil = require('gulp-util');
 
 tests = [];
