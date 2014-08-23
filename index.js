@@ -48,9 +48,9 @@ function pipeErrorStop(stream, options) {
         console.log('[pipe-error-stop] Stream finished, but emitted errors. Discontinuing.')
       }
     }
-    this.emit('end');
-    combined.emit('end');
-    combined.transformStream.emit('end');
+
+    end();
+    
     if (!errors.length) {
       if (options.successCallback) {
         options.successCallback();
@@ -62,11 +62,18 @@ function pipeErrorStop(stream, options) {
     }
   }
 
+  function end() {
+    delayer.emit('end');
+    combined.emit('end');
+    combined.transformStream.emit('end');
+  }
+
   function onError(err) {
     if (options.log) {
       console.log('[pipe-error-stop] Stream emitted an error; pipe will be discontinued.');
     }
     errors.push(err);
+    end();
     if (options.eachErrorCallback) {
       options.eachErrorCallback(err);
     }
