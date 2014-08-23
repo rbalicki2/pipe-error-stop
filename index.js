@@ -1,8 +1,6 @@
+var through = require('through'),
+  through2 = require('through2');
 
-
-
-var PassThrough = require('stream').PassThrough,
-  through = require('through');
 
 function pipeErrorStop(stream, options) {
   var files = [], errors = [];
@@ -11,11 +9,15 @@ function pipeErrorStop(stream, options) {
 
   var delayer = through(bufferContents, endStream);
 
-  var combined = new PassThrough();
+  var combined = through2.obj();
 
   combined.on('pipe', function(source) {
-    source.unpipe(this);
-    this.transformStream = source.pipe(stream)
+    if (source.unpipe) {
+      source.unpipe(this);
+    }
+
+    this.transformStream = source
+      .pipe(stream)
       .on('error', onError)
       .pipe(delayer);
   });
