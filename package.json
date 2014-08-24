@@ -1,7 +1,7 @@
 {
   "name": "pipe-error-stop",
   "description": "Buffers a pipe until it ends. Only passes data onward if no error was emitted.",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "keywords": [
     "pipe",
     "gulp",

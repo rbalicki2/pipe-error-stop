@@ -7,7 +7,7 @@ function pipeErrorStop(stream, options) {
 
   options === undefined ? options = {} : null;
 
-  var delayer = through(bufferContents, endStream);
+  var delayer = through(bufferContents, flushStream);
 
   var combined = through2.obj();
 
@@ -35,7 +35,7 @@ function pipeErrorStop(stream, options) {
     files.push(file);
   }
 
-  function endStream() {
+  function flushStream() {
     if (!errors.length) {
       if (options.log) {
         console.log('[pipe-error-stop] Stream finished without errors. Flushing.')
@@ -49,7 +49,7 @@ function pipeErrorStop(stream, options) {
       }
     }
 
-    end();
+    endStream();
     
     if (!errors.length) {
       if (options.successCallback) {
@@ -62,10 +62,15 @@ function pipeErrorStop(stream, options) {
     }
   }
 
-  function end() {
-    delayer.emit('end');
-    combined.emit('end');
-    combined.transformStream.emit('end');
+  var streamEnded = false;
+  function endStream() {
+    if (!streamEnded) {
+      delayer.emit('end');
+      combined.emit('end');
+      combined.transformStream.emit('end');
+      streamEnded = true;
+      
+    }
   }
 
   function onError(err) {
@@ -73,7 +78,7 @@ function pipeErrorStop(stream, options) {
       console.log('[pipe-error-stop] Stream emitted an error; pipe will be discontinued.');
     }
     errors.push(err);
-    end();
+    endStream();
     if (options.eachErrorCallback) {
       options.eachErrorCallback(err);
     }
