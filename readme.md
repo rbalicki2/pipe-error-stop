@@ -4,6 +4,8 @@
 
 *Issues should be reported on the [issue tracker](https://github.com/rbalicki2/pipe-error-stop/issues).*
 
+**Note:** The usage changed between 0.0.9 and 0.0.11! The new usage is much more intuitive in my opinion, the code is cleaned up, and the tests are much better.
+
 ## Installation
 
 ```sh
@@ -12,62 +14,39 @@ npm install --save pipe-error-stop
 
 ## Usage
 
-In this example, if the typescript compiler throws an error on any .ts file, then gulp will not write any output (i.e. leave javascript files as they are.)
+In this example, if the `gulp-jade` plugin throws an error on any .jade file, then gulp will not write any output, and the gulp process will end successfully. This has the added benefit of keeping `gulp.watch` from breaking.
 
 ```js
 var pipeErrorStop = require('pipe-error-stop'),
   gulp = require('gulp'),
-  tsc = require('gulp-tsc');
+  jade = require('gulp-jade');
 
-gulp.task('ts', function() {
+gulp.task('jade', function() {
   return gulp
-    .src('typescript-src/**/*.ts')
-    .pipe(pipeErrorStop(tsc({
-      module: 'commonjs',
-      sourcemap: false,
-      target: 'ES3'
-    })))
-    .pipe(gulp.dest('javascript'));
+    .src('src/**/*.jade')
+    .pipe(jade())
+    .pipe(pipeErrorStop())
+    .pipe(gulp.dest('dest'));
 });
 ```
 
 ## API
 
-### pipeErrorStop(stream, options)
-
-#### stream
-
-Type: `stream`  
-Required: `true`
-
-The stream to buffer and whose information to flush when it emits an `'end'` event.
+### pipeErrorStop(options)
 
 #### options
 
-##### log
-
-Type: `boolean`  
-Default: `false`
-
-Whether to `console.log` notes such as `'Stream ended with an error; discontinuing pipe.'`
-
-##### allErrorsCallback
-
-Type: `function(errArray)`
-
-If supplied, `allErrorCallback` is called when the data would have been flushed (i.e. when `stream` emits an `'end'` event.) `errArray` contains an array of all errors returned.
-
-##### eachErrorCallback
+##### errorCallback
 
 Type: `function(err)`
 
-If supplied, whenever the stream emits an error, this function is called with the error as the first parameter. Note that some streams may emit only the first error, or not emit errors at all. `tsc` in the above example emits at most one error. YMMV.
+If supplied, this callback is executed when an error is encountered. For example, you may want to call `require('gulp-notify').onError` to display a growl error notification.
 
 ##### successCallback
 
-Type: `function()`
+Type: `function(err)`
 
-If supplied, `successCallback` is called when data is flushed through the pipe (i.e. when `stream` emits and `'end'` event.) This will not be called if an error has been emitted. This will be called if no data was received.
+If supplied, this callback is executed when no error is encountered and the previous stream ends. It is called only when data is flushed through the pipe.
 
 ## License
 
