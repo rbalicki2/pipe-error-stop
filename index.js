@@ -1,88 +1,55 @@
-var through = require('through'),
-  through2 = require('through2');
+'use strict';
 
+module.exports = pipeErrorStop;
 
-function pipeErrorStop(stream, options) {
-  var files = [], errors = [];
+//////////////////
 
-  options === undefined ? options = {} : null;
+var through2 = require('through2'),
+    _ = require('lodash');
 
-  var delayer = through(bufferContents, flushStream);
+function pipeErrorStop (config) {
+  var files = [],
+      pipe,
+      stream,
+      errorInPipe;
 
-  var combined = through2.obj();
+  config = _.extend(getDefaultConfig(), config);
 
-  combined.on('pipe', function(source) {
-    if (source.unpipe) {
-      source.unpipe(this);
-    }
+  stream = through2.obj(encounteredFile, allFilesDone);
 
-    this.transformStream = source
-      .pipe(stream)
-      .on('error', onError)
-      .pipe(delayer);
+  stream.once('pipe', function addErrorHandlerToSource (source) {
+    source.on('error', encounteredError);
   });
 
-  combined.pipe = function(dest, options) {
-    return this.transformStream.pipe(dest, options);
-  }
+  return stream;
 
-  return combined;
+  //////////////
 
-  function bufferContents(file, encoding, done) {
-    if (file.isNull()) {
-      return;
-    }
+  function encounteredFile (file, enc, done) {
     files.push(file);
+    done();
   }
 
-  function flushStream() {
-    if (!errors.length) {
-      if (options.log) {
-        console.log('[pipe-error-stop] Stream finished without errors. Flushing.')
-      }
-      for (var i = 0; i < files.length; i++) {
-        this.emit('data', files[i]);
-      }
-    } else {
-      if (options.log) {
-        console.log('[pipe-error-stop] Stream finished, but emitted errors. Discontinuing.')
-      }
+  function allFilesDone (done) {
+    // jshint validthis: true
+    if (!errorInPipe) {
+      files.forEach(this.push.bind(this));
+      config.successCallback();
     }
 
-    endStream();
-    
-    if (!errors.length) {
-      if (options.successCallback) {
-        options.successCallback();
-      }
-    } else {
-      if (options.allErrorsCallback) {
-        options.allErrorsCallback(errors);
-      }
-    }
+    done();
   }
 
-  var streamEnded = false;
-  function endStream() {
-    if (!streamEnded) {
-      delayer.emit('end');
-      combined.emit('end');
-      combined.transformStream.emit('end');
-      streamEnded = true;
-      
-    }
-  }
-
-  function onError(err) {
-    if (options.log) {
-      console.log('[pipe-error-stop] Stream emitted an error; pipe will be discontinued.');
-    }
-    errors.push(err);
-    endStream();
-    if (options.eachErrorCallback) {
-      options.eachErrorCallback(err);
-    }
+  function encounteredError (err) {
+    errorInPipe = true;
+    stream.end();
+    config.errorCallback(err);
   }
 }
 
-module.exports = pipeErrorStop;
+function getDefaultConfig () {
+  return {
+    errorCallback: function () {},
+    successCallback: function () {}
+  };
+}
